@@ -11,6 +11,16 @@ function App() {
     setItems([...items, { name: '', totalWeight: '', totalPrice: '', usedWeight: '', cost: 0 }]);
   };
 
+  const removeItem = (index) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+
+    // Recalcula o custo total após remover o item
+    const newTotalCost = updatedItems.reduce((sum, item) => sum + item.cost, 0);
+    setTotalCost(newTotalCost);
+    setFinalPrice(newTotalCost * (1 + profitMargin / 100)); // Recalcula o preço de venda
+  };
+
   const handleInputChange = (index, field, value) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
@@ -67,13 +77,13 @@ function App() {
             onChange={(e) => handleInputChange(index, 'usedWeight', parseFloat(e.target.value))}
           />
           <span> Custo: R$ {item.cost.toFixed(2)}</span>
+          <button onClick={() => removeItem(index)}>Remover</button>
         </div>
       ))}
       <button onClick={addItem}>Adicionar Item</button>
 
       <h2>Custo Total: R$ {totalCost.toFixed(2)}</h2>
       <div style={{ marginTop: '20px' }}>
-        <label htmlFor="profit">Margem de lucro (%): </label>
         <input
           type="number"
           placeholder="Percentual de lucro (%)"
